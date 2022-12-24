@@ -7,12 +7,23 @@ class imdct_scoreboard extends uvm_scoreboard;
 	// control fileds
    	bit checks_enable = 1;
    	bit coverage_enable = 1;
-  
+   	
+	axi_lite_item axi_tr_clone;
+	bram_a_item bram_a_tr_clone;
+	bram_b_item bram_b_tr_clone;
+	
+	imdct_config cfg;
+	
+	int block_type_00, block_type_01, block_type_10, block_type_11;
+	int gr, ch;	
+	int start_count = 0; //broj izvrsavanja
+  	bit start_happend = 0, ready;
+	  
 	uvm_analysis_imp_axi_lite#(axi_lite_item, imdct_scoreboard) axi_lite_collected_port;
 	uvm_analysis_imp_bram_a#(bram_a_item, imdct_scoreboard) bram_a_collected_port;
 	uvm_analysis_imp_bram_b#(bram_b_item, imdct_scoreboard) bram_b_collected_port;
 
-  	int num_of_data; //brojac za bram 
+  	int num_of_tr; //brojac 
 
 	`uvm_component_utils_begin(imdct_scoreboard)
       `uvm_field_int(checks_enable, UVM_DEFAULT)
@@ -26,39 +37,180 @@ class imdct_scoreboard extends uvm_scoreboard;
 		bram_b_collected_port = new("bram_b_collected_port", this);
 	endfunction
 
-	function void report_phase(uvm_phase phase);
-      `uvm_info(get_type_name(), $sformatf("Imdct scoreboard examined: %0d transactions", num_of_data), UVM_LOW);
-   	endfunction : report_phase
-
-
+	
 	function void write_axi_lite(axi_lite_item axi_tr);
-	axi_lite_item axi_tr_clone;
-	$cast(axi_tr_clone, axi_tr.clone());
- 	if(checks_enable) begin
-         // do actual checking here
-         // ...
-         // ++num_of_tr;
-	end
+
+		$cast(axi_tr_clone, axi_tr.clone());
+	
+ 			//if(checks_enable) begin
+ 			
+ 				//cuvamo vrednost block_type_00 u promenljivu sa istim imenom
+ 				if(axi_tr_clone.address == 4) begin
+ 					block_type_00 = axi_tr_clone.data;
+			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_00 : %d", block_type_00), UVM_LOW)
+			    	
+         		//cekiranje reset vrednosti -> postavljeno je polje u konfiguraciji samo za test u kome se citaju reset vrednosti i ovde se proverava da li su u redu
+         		if(cfg.reset_happend == 1 && axi_tr_clone.read_write == 0) begin
+         			if(block_type_00 !== 0) begin
+         				`uvm_error(get_type_name(), $sformatf("Reset value of BLOCK_TYPE_00 should be 0, but it is %d.", block_type_00))
+    				end
+    				else begin 
+     					`uvm_info(get_type_name(), "Reset value for BLOCK_TYPE_00 is 0.", UVM_LOW)
+    				end
+    			end
+				end
+			
+				else if(axi_tr_clone.address == 8) begin
+					block_type_01 = axi_tr_clone.data;
+			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_01 : %d", block_type_01), UVM_LOW)
+				
+				if(cfg.reset_happend == 1 && axi_tr_clone.read_write == 0) begin
+         			if(block_type_01 !== 0) begin
+         				`uvm_error(get_type_name(), $sformatf("Reset value of BLOCK_TYPE_01 should be 0, but it is %d.", block_type_01))
+    				end
+    				else begin 
+     					`uvm_info(get_type_name(), "Reset value for BLOCK_TYPE_01 is 0.", UVM_LOW)
+    				end
+    			end
+				end
+				
+				else if(axi_tr_clone.address == 12) begin
+					block_type_10 = axi_tr_clone.data;
+			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_10 : %d", block_type_10), UVM_LOW)
+				
+				if(cfg.reset_happend == 1 && axi_tr_clone.read_write == 0) begin
+         			if(block_type_10 !== 0) begin
+         				`uvm_error(get_type_name(), $sformatf("Reset value of BLOCK_TYPE_10 should be 0, but it is %d.", block_type_10))
+    				end
+    				else begin 
+     					`uvm_info(get_type_name(), "Reset value for BLOCK_TYPE_10 is 0.", UVM_LOW)
+    				end
+    			end
+				end
+				
+				else if(axi_tr_clone.address == 16) begin
+					block_type_11 = axi_tr_clone.data;
+			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_11 : %d", block_type_11), UVM_LOW)
+				
+				if(cfg.reset_happend == 1 && axi_tr_clone.read_write == 0) begin
+         			if(block_type_11 !== 0) begin
+         				`uvm_error(get_type_name(), $sformatf("Reset value of BLOCK_TYPE_11 should be 0, but it is %d.", block_type_11))
+    				end
+    				else begin 
+     					`uvm_info(get_type_name(), "Reset value for BLOCK_TYPE_11 is 0.", UVM_LOW)
+    				end
+    			end
+				end
+				
+				else if(axi_tr_clone.address == 20) begin
+					gr = axi_tr_clone.data;
+			    	`uvm_info(get_type_name(), $sformatf("GR : %d", gr), UVM_LOW)
+				
+				if(cfg.reset_happend == 1 && axi_tr_clone.read_write == 0) begin
+         			if(gr !== 0) begin
+         				`uvm_error(get_type_name(), $sformatf("Reset value of GR should be 0, but it is %d.", gr))
+    				end
+    				else begin 
+     					`uvm_info(get_type_name(), "Reset value for GR is 0.", UVM_LOW)
+    				end
+    			end
+				end
+				
+				else if(axi_tr_clone.address == 24) begin
+					ch = axi_tr_clone.data;
+			    	`uvm_info(get_type_name(), $sformatf("CH : %d", ch), UVM_LOW)
+				
+				if(cfg.reset_happend == 1 && axi_tr_clone.read_write == 0) begin
+         			if(ch !== 0) begin
+         				`uvm_error(get_type_name(), $sformatf("Reset value of CH should be 0, but it is %d.", ch))
+    				end
+    				else begin 
+     					`uvm_info(get_type_name(), "Reset value for CH is 0.", UVM_LOW)
+    				end
+    			end
+				end
+				
+				else if(axi_tr_clone.address == 0) begin
+				//cekiranje reset vrednosti	
+				if(cfg.reset_happend == 1 && axi_tr_clone.read_write == 0) begin
+         			if(axi_tr_clone.data !== 0) begin
+         				`uvm_error(get_type_name(), $sformatf("Reset value of START should be 0, but it is %d.", axi_tr_clone.data))
+    				end
+    				else begin 
+     					`uvm_info(get_type_name(), "Reset value for START is 0.", UVM_LOW)
+    				end
+    			end
+    			
+    			if(axi_clone_item.data == 1) begin
+     				`uvm_info(get_type_name(), $sformatf("IMDCT started"), UVM_LOW)
+    				start_happend = 1;
+    				start_count ++;
+   				end
+  				end
+				
+				
+				else if(axi_tr_clone.address == 28) begin
+				//cekiranje reset vrednosti	
+				if(cfg.reset_happend == 1 && axi_tr_clone.read_write == 0) begin
+         			if(axi_tr_clone.data !== 0) begin
+         				`uvm_error(get_type_name(), $sformatf("Reset value of READY should be 0, but it is %d.", axi_tr_clone.data))
+    				end
+    				else begin 
+     					`uvm_info(get_type_name(), "Reset value for READY is 0.", UVM_LOW)
+    				end
+    			end
+    			
+    			if(axi_clone_item.data == 1) begin
+     				ready = 1;
+   				end
+  				end
+				
+				//Ako pokusamo da pristupimo registru koji ne postoji
+  				if(axi_tr_clone.addr == 0 || axi_tr_clone.addr == 4 || axi_tr_clone.addr == 8 || axi_tr_clone.addr == 12 || axi_tr_clone.addr == 16 || axi_tr_clone.addr == 20 || axi_tr_clone.addr == 24 || axi_tr_clone.addr == 28) begin
+    				`uvm_info(get_type_name(), $sformatf("AXI DATA SCOREBOARD: \n%s", axi_tr_clone.sprint()), UVM_DEBUG)
+  				end
+  				else begin
+   					`uvm_error(get_type_name(), $sformatf("Register with the address of %d doesn't exist.",axi_tr_clone.addr))
+  				end
+			
 	endfunction : write_axi_lite
+	
 
 	function void write_bram_a(bram_a_item bram_a_tr);
-	bram_a_item bram_a_tr_clone;
+
 	$cast(bram_a_tr_clone, bram_a_tr.clone());
  	if(checks_enable) begin
-         // do actual checking here
-         // ...
-         // ++num_of_tr;
+     	//provera validnosti podatka (da li je enable na 1)
+		if(bram_a_tr_clone.en !== 1) begin 
+    		`uvm_error(get_type_name(), "Bram A data is not valid because en is at 0.")
+   		end
+   		else begin
+    		`uvm_info(get_type_name(), "Bram A data is valid.",UVM_LOW)
+   		end
 	end
 	endfunction : write_bram_a
 	
+	
 	function void write_bram_b(bram_b_item bram_b_tr);
-	bram_b_item bram_b_tr_clone;
+
 	$cast(bram_b_tr_clone, bram_b_tr.clone());
  	if(checks_enable) begin
-         // do actual checking here
-         // ...
-         // ++num_of_tr;
+         //provera validnosti podatka (da li je enable na 1)
+		if(bram_b_tr_clone.en !== 1) begin 
+    		`uvm_error(get_type_name(), "Bram B data is not valid because en is at 0.")
+   		end
+   		else begin
+    		`uvm_info(get_type_name(), "Bram B data is valid.",UVM_LOW)
+   		end
 	end
+
 	endfunction : write_bram_b
+	
+	
+	
+	
+	function void report_phase(uvm_phase phase);
+      `uvm_info(get_type_name(), $sformatf("Imdct scoreboard examined: %0d transactions", num_of_data), UVM_LOW);
+   	endfunction : report_phase
 
 endclass;
