@@ -18,12 +18,18 @@ class imdct_scoreboard extends uvm_scoreboard;
 	int gr, ch;	
 	int start_count = 0; //broj izvrsavanja
   	bit start_happend = 0, ready;
+	int unsigned bram_a_que[$];
+	int num_of_data_a; //brojac za bram A
+	int unsigned bram_b_que[$];
+	int num_of_data_b; //brojac za bram B
+	string s;
+  	int num_of_data; //brojac 
+
 	  
 	uvm_analysis_imp_axi_lite#(axi_lite_item, imdct_scoreboard) axi_lite_collected_port;
 	uvm_analysis_imp_bram_a#(bram_a_item, imdct_scoreboard) bram_a_collected_port;
 	uvm_analysis_imp_bram_b#(bram_b_item, imdct_scoreboard) bram_b_collected_port;
 
-  	int num_of_tr; //brojac 
 
 	`uvm_component_utils_begin(imdct_scoreboard)
       `uvm_field_int(checks_enable, UVM_DEFAULT)
@@ -141,7 +147,7 @@ class imdct_scoreboard extends uvm_scoreboard;
     				end
     			end
     			
-    			if(axi_clone_item.data == 1) begin
+    			if(axi_tr_clone.data == 1) begin
      				`uvm_info(get_type_name(), $sformatf("IMDCT started"), UVM_LOW)
     				start_happend = 1;
     				start_count ++;
@@ -160,17 +166,17 @@ class imdct_scoreboard extends uvm_scoreboard;
     				end
     			end
     			
-    			if(axi_clone_item.data == 1) begin
+    			if(axi_tr_clone.data == 1) begin
      				ready = 1;
    				end
   				end
 				
 				//Ako pokusamo da pristupimo registru koji ne postoji
-  				if(axi_tr_clone.addr == 0 || axi_tr_clone.addr == 4 || axi_tr_clone.addr == 8 || axi_tr_clone.addr == 12 || axi_tr_clone.addr == 16 || axi_tr_clone.addr == 20 || axi_tr_clone.addr == 24 || axi_tr_clone.addr == 28) begin
+  				if(axi_tr_clone.address == 0 || axi_tr_clone.address == 4 || axi_tr_clone.address == 8 || axi_tr_clone.address == 12 || axi_tr_clone.address == 16 || axi_tr_clone.address == 20 || axi_tr_clone.address == 24 || axi_tr_clone.address == 28) begin
     				`uvm_info(get_type_name(), $sformatf("AXI DATA SCOREBOARD: \n%s", axi_tr_clone.sprint()), UVM_DEBUG)
   				end
   				else begin
-   					`uvm_error(get_type_name(), $sformatf("Register with the address of %d doesn't exist.",axi_tr_clone.addr))
+   					`uvm_error(get_type_name(), $sformatf("Register with the address of %d doesn't exist.",axi_tr_clone.address))
   				end
 			
 	endfunction : write_axi_lite
@@ -179,6 +185,10 @@ class imdct_scoreboard extends uvm_scoreboard;
 	function void write_bram_a(bram_a_item bram_a_tr);
 
 	$cast(bram_a_tr_clone, bram_a_tr.clone());
+
+	bram_a_que.push_back(bram_a_tr_clone.in_data[num_of_data_a]); //punim queue A sa podacima
+    num_of_data_a++; //da bih ubacio po jedan podatak??
+
  	if(checks_enable) begin
      	//provera validnosti podatka (da li je enable na 1)
 		if(bram_a_tr_clone.en !== 1) begin 
@@ -194,6 +204,10 @@ class imdct_scoreboard extends uvm_scoreboard;
 	function void write_bram_b(bram_b_item bram_b_tr);
 
 	$cast(bram_b_tr_clone, bram_b_tr.clone());
+
+	bram_b_que.push_back(bram_b_tr_clone.in_data[num_of_data_b]); //punim queue B sa podacima
+    num_of_data_b++; //da bih ubacio po jedan podatak??
+
  	if(checks_enable) begin
          //provera validnosti podatka (da li je enable na 1)
 		if(bram_b_tr_clone.en !== 1) begin 
@@ -206,7 +220,51 @@ class imdct_scoreboard extends uvm_scoreboard;
 
 	endfunction : write_bram_b
 	
+	function void check_phase(uvm_phase phase);
 	
+	// check for bram a 
+ if(start_count !== 0) begin
+	assert_epmty_queue_bram_a_after_pop_front: assert (bram_a_que.size() == 0)
+	  begin
+	    s = "\n Queue bram_a is empty! \n";
+	    // print message
+	    `uvm_info(get_type_name(), $sformatf("%s", s), UVM_HIGH)
+	  end else begin
+	    s = $sformatf("\n Queue koji sadrzi podatke iz bram_a nije prazan, sadrzi %0d: \n" ,bram_a_que.size());
+	    
+	    // print message
+      `uvm_error(get_type_name(), $sformatf("%s", s))
+	    
+	    foreach (bram_a_que[i]) begin
+	      `uvm_info(get_type_name(), $sformatf("Transakcija [%d] :", i), UVM_LOW)
+	      //bram_a_que.print();
+	    end
+	  end
+	  
+  // check for bram b 
+	assert_epmty_queue_bram_b_after_pop_front: assert (bram_b_que.size() == 0)
+	  begin
+	    s = "\n Queue bram_b is empty! \n";
+	    // print message
+	    `uvm_info(get_type_name(), $sformatf("%s", s), UVM_HIGH)
+	  end else begin
+	    s = $sformatf("\n Queue koji sadrzi podatke iz bram_b nije prazan, sadrzi %0d: \n" ,bram_b_que.size());
+	    
+	    // print message
+      `uvm_error(get_type_name(), $sformatf("%s", s))
+	    
+	    foreach (bram_b_que[i]) begin
+	      `uvm_info(get_type_name(), $sformatf("Transakcija [%d] :", i), UVM_LOW)
+	      //bram_b_que.print();
+	    end
+	  end
+   `uvm_info( get_type_name(), $sformatf("Number of imdct is %d. ", start_count), UVM_LOW)
+   start_count = 0; // vrati start_conut na 0 za sledeci ciklus
+	 end
+   else begin //ako nema starta
+    `uvm_info(get_type_name(), "IMDCT wasn't started.", UVM_LOW)
+   end
+endfunction: check_phase
 	
 	
 	function void report_phase(uvm_phase phase);
