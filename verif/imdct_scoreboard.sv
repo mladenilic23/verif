@@ -45,11 +45,11 @@ class imdct_scoreboard extends uvm_scoreboard;
 
 	
 	function void write_axi_lite(axi_lite_item axi_tr);
-
+		`uvm_info(get_type_name(), $sformatf("PROSAO!!!!!!!!!!!!!"), UVM_LOW)
 		$cast(axi_tr_clone, axi_tr.clone());
-	
- 			//if(checks_enable) begin
- 			
+			
+ 			if(checks_enable) begin
+				
  				//cuvamo vrednost block_type_00 u promenljivu sa istim imenom
  				if(axi_tr_clone.address == 4) begin
  					block_type_00 = axi_tr_clone.data;
@@ -178,7 +178,7 @@ class imdct_scoreboard extends uvm_scoreboard;
   				else begin
    					`uvm_error(get_type_name(), $sformatf("Register with the address of %d doesn't exist.",axi_tr_clone.address))
   				end
-			
+			end
 	endfunction : write_axi_lite
 	
 

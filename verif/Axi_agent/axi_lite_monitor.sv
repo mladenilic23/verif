@@ -78,7 +78,7 @@ class axi_lite_monitor extends uvm_monitor;
             	if(vif.s_axi_rvalid)begin
                		read_address.sample();
                		curr_item.data = vif.s_axi_rdata;
-               		curr_item.address = address;
+               		curr_item.address = vif.s_axi_awaddr;
                		
                		item_collected_port.write(curr_item); //send to scoreboard!!!
             	end
