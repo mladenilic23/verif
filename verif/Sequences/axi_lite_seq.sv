@@ -12,7 +12,8 @@ class axi_lite_seq extends axi_lite_base_seq;
 		req = axi_lite_item::type_id::create("req");
 		
 		forever begin
-  			
+
+		//************************************************ UPISIVANJE ******************************************************	
   			//block_type_00
   			start_item(req);
   
@@ -52,7 +53,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   			//gr
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 1; req.address == 20; req.data == 1;}) begin 
+  				if(!req.randomize() with {req.read_write == 1; req.address == 20; req.data == 0;}) begin 
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -70,12 +71,77 @@ class axi_lite_seq extends axi_lite_base_seq;
   			//start
   			start_item(req);
   				 
-  				if(!req.randomize() with {req.read_write == 1; req.address == 0; req.data == 0;}) begin 
+  				if(!req.randomize() with {req.read_write == 1; req.address == 0; req.data == 1;}) begin 
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end  
   
   			finish_item(req);
+
+		//*********************************************************** CITANJE *********************************************************
+
+			//block_type_00
+  			start_item(req);
+  
+  				if(!req.randomize() with {req.read_write == 0; req.address == 4;}) begin
+    				`uvm_fatal(get_type_name(), "Failed to randomize.")
+  				end
+  				 
+  			finish_item(req);
   			
+			//block_type_01
+  			start_item(req);
+  
+  				if(!req.randomize() with {req.read_write == 0; req.address == 8;}) begin
+    				`uvm_fatal(get_type_name(), "Failed to randomize.")
+  				end
+  				 
+  			finish_item(req);
+
+			//block_type_10
+  			start_item(req);
+  
+  				if(!req.randomize() with {req.read_write == 0; req.address == 12;}) begin
+    				`uvm_fatal(get_type_name(), "Failed to randomize.")
+  				end
+  				 
+  			finish_item(req);
+
+			//block_type_11
+  			start_item(req);
+  
+  				if(!req.randomize() with {req.read_write == 0; req.address == 16;}) begin
+    				`uvm_fatal(get_type_name(), "Failed to randomize.")
+  				end
+  				 
+  			finish_item(req);
+
+  			//gr
+  			start_item(req);
+  
+  				if(!req.randomize() with {req.read_write == 0; req.address == 20;}) begin 
+    				`uvm_fatal(get_type_name(), "Failed to randomize.")
+  				end
+  				 
+  			finish_item(req);
+
+			//ch
+  			start_item(req);
+  
+  				if(!req.randomize() with {req.read_write == 0; req.address == 24;}) begin 
+    				`uvm_fatal(get_type_name(), "Failed to randomize.")
+  				end
+  				 
+  			finish_item(req);
+  			
+  			//start
+  			start_item(req);
+  				 
+  				if(!req.randomize() with {req.read_write == 0; req.address == 0;}) begin 
+    				`uvm_fatal(get_type_name(), "Failed to randomize.")
+  				end  
+  
+  			finish_item(req);
+
 		end
 
 	endtask : body

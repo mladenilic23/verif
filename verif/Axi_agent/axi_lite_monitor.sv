@@ -16,33 +16,48 @@ class axi_lite_monitor extends uvm_monitor;
 	virtual interface axi_lite_if vif;
 
 	axi_lite_item curr_item;
-	
+
 	// coverage can go here 
 	covergroup write_address;
 		option.per_instance = 1;
       	write_address: coverpoint address{
-     		bins start = {'h0};
-         	bins block_type_00 = {'h4};
-         	bins block_type_01 = {'h8};
-         	bins block_type_10 = {'h12};
-         	bins block_type_11 = {'h16};
-     		bins gr = {'h20};
-         	bins ch = {4'b0110};
+     		bins start = {0};
+         	bins block_type_00 = {4};
+         	bins block_type_01 = {8};
+         	bins block_type_10 = {12};
+         	bins block_type_11 = {16};
+     		bins gr = {20};
+         	bins ch = {24};
+			
+			//bins write_address_bin = {0};
   		}
+		data_write: coverpoint vif.s_axi_wdata {
+         bins start_0 = {0};
+         bins start_1 = {1};         
+      }
 	endgroup // write_read_address
 
    	covergroup read_address;
       	option.per_instance = 1;
       	read_address: coverpoint address{
-         	bins start = {'h0};
-         	bins block_type_00 = {'h4};
-         	bins block_type_01 = {'h8};
-         	bins block_type_10 = {'h12};
-         	bins block_type_11 = {'h16};
-     		bins gr = {'h20};
-         	bins ch = {'h24};
-         	bins ready = {'h28};         
+         	bins start = {0};
+         	bins block_type_00 = {4};
+         	bins block_type_01 = {8};
+         	bins block_type_10 = {12};
+         	bins block_type_11 = {16};
+     		bins gr = {20};
+         	bins ch = {24};
+         	bins ready = {28};    
+			
+			//bins start_address_bin = {0};
+         	//bins ready_address_bin = {28}; 
+
       	}     
+		data_read: coverpoint vif.s_axi_rdata{
+         bins data_bin_ready = {1};
+         bins data_bin_not_ready = {0};
+      }
+	  raw_and_rbw: cross    read_address, data_read;
    	endgroup
    
    	// ---------------------------------------------------------------------
@@ -78,7 +93,7 @@ class axi_lite_monitor extends uvm_monitor;
             	if(vif.s_axi_rvalid)begin
                		read_address.sample();
                		curr_item.data = vif.s_axi_rdata;
-               		curr_item.address = vif.s_axi_awaddr;
+               		curr_item.address = address;
                		
                		item_collected_port.write(curr_item); //send to scoreboard!!!
             	end
