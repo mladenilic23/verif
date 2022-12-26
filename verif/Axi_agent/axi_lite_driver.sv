@@ -25,7 +25,7 @@ class axi_lite_driver extends uvm_driver #(axi_lite_item);
          	
          // do actual driving here
 	      @(posedge vif.clock)begin	//writing using AXI LITE
-	         if(req.read_write)begin	//read = 0, write = 1
+	         if(req.write)begin
 	            vif.s_axi_awaddr = req.address;
 	            vif.s_axi_awvalid = 1;
 	            vif.s_axi_wdata = req.data;
@@ -38,8 +38,9 @@ class axi_lite_driver extends uvm_driver #(axi_lite_item);
 	            vif.s_axi_wvalid = 0;
      		 wait(!vif.s_axi_bvalid);	   
 	            vif.s_axi_bready = 0;
-	         end // if (req.read_write)
-	         else begin
+	         end
+
+	         else if(req.read)begin
 	            vif.s_axi_araddr = req.address;
                 vif.s_axi_arvalid = 1;
                 vif.s_axi_rready = 1;

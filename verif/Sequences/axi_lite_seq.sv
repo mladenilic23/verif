@@ -17,7 +17,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   			//block_type_00
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 1; req.address == 4; req.data == 2'b00;}) begin
+  				if(!req.randomize() with {req.write == 1; req.address == 4; req.data == 2'b00;}) begin
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -26,7 +26,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//block_type_01
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 1; req.address == 8; req.data == 2'b00;}) begin
+  				if(!req.randomize() with {req.write == 1; req.address == 8; req.data == 2'b00;}) begin
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -35,7 +35,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//block_type_10
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 1; req.address == 12; req.data == 2'b00;}) begin
+  				if(!req.randomize() with {req.write == 1; req.address == 12; req.data == 2'b00;}) begin
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -44,7 +44,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//block_type_11
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 1; req.address == 16; req.data == 2'b00;}) begin
+  				if(!req.randomize() with {req.write == 1; req.address == 16; req.data == 2'b00;}) begin
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -53,7 +53,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   			//gr
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 1; req.address == 20; req.data == 0;}) begin 
+  				if(!req.randomize() with {req.write == 1; req.address == 20; req.data == 0;}) begin 
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -62,7 +62,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//ch
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 1; req.address == 24; req.data == 0;}) begin 
+  				if(!req.randomize() with {req.write == 1; req.address == 24; req.data == 0;}) begin 
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -71,7 +71,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   			//start
   			start_item(req);
   				 
-  				if(!req.randomize() with {req.read_write == 1; req.address == 0; req.data == 1;}) begin 
+  				if(!req.randomize() with {req.write == 1; req.address == 0; req.data == 1;}) begin 
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end  
   
@@ -82,7 +82,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//block_type_00
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 0; req.address == 4;}) begin
+  				if(!req.randomize() with {req.read == 1; req.address == 4;}) begin
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -91,7 +91,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//block_type_01
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 0; req.address == 8;}) begin
+  				if(!req.randomize() with {req.read == 1; req.address == 8;}) begin
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -100,7 +100,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//block_type_10
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 0; req.address == 12;}) begin
+  				if(!req.randomize() with {req.read == 1; req.address == 12;}) begin
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -109,7 +109,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//block_type_11
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 0; req.address == 16;}) begin
+  				if(!req.randomize() with {req.read == 1; req.address == 16;}) begin
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -118,7 +118,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   			//gr
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 0; req.address == 20;}) begin 
+  				if(!req.randomize() with {req.read == 1; req.address == 20;}) begin 
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -127,7 +127,7 @@ class axi_lite_seq extends axi_lite_base_seq;
 			//ch
   			start_item(req);
   
-  				if(!req.randomize() with {req.read_write == 0; req.address == 24;}) begin 
+  				if(!req.randomize() with {req.read == 1; req.address == 24;}) begin 
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end
   				 
@@ -136,7 +136,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   			//start
   			start_item(req);
   				 
-  				if(!req.randomize() with {req.read_write == 0; req.address == 0;}) begin 
+  				if(!req.randomize() with {req.read == 1; req.address == 0;}) begin 
     				`uvm_fatal(get_type_name(), "Failed to randomize.")
   				end  
   

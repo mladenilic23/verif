@@ -28,12 +28,18 @@ class axi_lite_monitor extends uvm_monitor;
          	bins block_type_11 = {16};
      		bins gr = {20};
          	bins ch = {24};
-			
-			//bins write_address_bin = {0};
   		}
 		data_write: coverpoint vif.s_axi_wdata {
-         bins start_0 = {0};
-         bins start_1 = {1};         
+         	bins start_0 = {0};
+         	bins start_1 = {1};
+		 	bins block_type_0 = {2'b00};
+		 	bins block_type_1 = {2'b01};
+		 	bins block_type_2 = {2'b10};
+		 	bins block_type_3 = {2'b11};
+		 	bins gr_0 = {0};
+         	bins gr_1 = {1};
+		 	bins ch_0 = {0};
+         	bins ch_1 = {1};      
       }
 	endgroup // write_read_address
 
@@ -48,14 +54,10 @@ class axi_lite_monitor extends uvm_monitor;
      		bins gr = {20};
          	bins ch = {24};
          	bins ready = {28};    
-			
-			//bins start_address_bin = {0};
-         	//bins ready_address_bin = {28}; 
-
       	}     
 		data_read: coverpoint vif.s_axi_rdata{
-         bins data_bin_ready = {1};
-         bins data_bin_not_ready = {0};
+         	bins data_bin_ready = {1};
+         	bins data_bin_not_ready = {0};
       }
 	  raw_and_rbw: cross    read_address, data_read;
    	endgroup
