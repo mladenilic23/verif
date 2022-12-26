@@ -21,12 +21,12 @@ class axi_lite_monitor extends uvm_monitor;
 	covergroup write_address;
 		option.per_instance = 1;
       	write_address: coverpoint address{
-     		bins start = {4'b0000};
-         	bins block_type_00 = {4'b0001};
-         	bins block_type_01 = {4'b0010};
-         	bins block_type_10 = {4'b0011};
-         	bins block_type_11 = {4'b0100};
-     		bins gr = {4'b0101};
+     		bins start = {'h0};
+         	bins block_type_00 = {'h4};
+         	bins block_type_01 = {'h8};
+         	bins block_type_10 = {'h12};
+         	bins block_type_11 = {'h16};
+     		bins gr = {'h20};
          	bins ch = {4'b0110};
   		}
 	endgroup // write_read_address
@@ -34,14 +34,14 @@ class axi_lite_monitor extends uvm_monitor;
    	covergroup read_address;
       	option.per_instance = 1;
       	read_address: coverpoint address{
-         	bins start = {4'b0000};
-         	bins block_type_00 = {4'b0001};
-         	bins block_type_01 = {4'b0010};
-         	bins block_type_10 = {4'b0011};
-         	bins block_type_11 = {4'b0100};
-     		bins gr = {4'b0101};
-         	bins ch = {4'b0110};
-         	bins ready = {4'b0111};         
+         	bins start = {'h0};
+         	bins block_type_00 = {'h4};
+         	bins block_type_01 = {'h8};
+         	bins block_type_10 = {'h12};
+         	bins block_type_11 = {'h16};
+     		bins gr = {'h20};
+         	bins ch = {'h24};
+         	bins ready = {'h28};         
       	}     
    	endgroup
    
