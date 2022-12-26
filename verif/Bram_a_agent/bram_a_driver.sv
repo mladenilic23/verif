@@ -32,7 +32,7 @@ class bram_a_driver extends uvm_driver #(bram_a_item);
 	         	    
 	         if(vif.s_en_bram_a)begin
 		         
-		         if(vif.s_addr_bram_a < 1151)begin
+		         if(vif.s_addr_bram_a < 4607)begin
 
 		            //seq_item_port.get_next_item(req);
 		            //req.address = address;

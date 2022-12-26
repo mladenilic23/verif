@@ -22,7 +22,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   				 
   			finish_item(req);
   			
-  			//block_type_01
+			//block_type_01
   			start_item(req);
   
   				if(!req.randomize() with {req.read_write == 1; req.address == 8; req.data == 2'b00;}) begin
@@ -31,7 +31,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   				 
   			finish_item(req);
 
-  			//block_type_10
+			//block_type_10
   			start_item(req);
   
   				if(!req.randomize() with {req.read_write == 1; req.address == 12; req.data == 2'b00;}) begin
@@ -40,7 +40,7 @@ class axi_lite_seq extends axi_lite_base_seq;
   				 
   			finish_item(req);
 
-  			//block_type_11
+			//block_type_11
   			start_item(req);
   
   				if(!req.randomize() with {req.read_write == 1; req.address == 16; req.data == 2'b00;}) begin
