@@ -40,7 +40,7 @@ class axi_lite_driver extends uvm_driver #(axi_lite_item);
 	            vif.s_axi_bready = 0;
 	         end
 
-	         else if(req.read)begin
+	         if(req.read)begin
 	            vif.s_axi_araddr = req.address;
                 vif.s_axi_arvalid = 1;
                 vif.s_axi_rready = 1;
