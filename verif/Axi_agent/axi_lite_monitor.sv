@@ -17,31 +17,56 @@ class axi_lite_monitor extends uvm_monitor;
 
 	axi_lite_item curr_item;
 
-	// coverage can go here 
+	
+	//coverage can go here 
 	covergroup write_address;
 		option.per_instance = 1;
       	write_address: coverpoint address{
      		bins start = {0};
-         	bins block_type_00 = {4};
-         	bins block_type_01 = {8};
-         	bins block_type_10 = {12};
-         	bins block_type_11 = {16};
-     		bins gr = {20};
-         	bins ch = {24};
   		}
 		data_write: coverpoint vif.s_axi_wdata {
          	bins start_0 = {0};
          	bins start_1 = {1};
+      	}
+	endgroup
+
+	covergroup block_type_address;
+		option.per_instance = 1;
+      	block_type_address: coverpoint address{
+         	bins block_type_00 = {4};
+         	bins block_type_01 = {8};
+         	bins block_type_10 = {12};
+         	bins block_type_11 = {16};
+  		}
+		block_type_data: coverpoint vif.s_axi_wdata {
 		 	bins block_type_0 = {2'b00};
 		 	bins block_type_1 = {2'b01};
 		 	bins block_type_2 = {2'b10};
-		 	bins block_type_3 = {2'b11};
+		 	bins block_type_3 = {2'b11};    
+      	}
+	endgroup 
+
+	covergroup gr_address;
+		option.per_instance = 1;
+      	gr_address: coverpoint address{ 
+     		bins gr = {20};
+  		}
+		gr_data: coverpoint vif.s_axi_wdata {
 		 	bins gr_0 = {0};
-         	bins gr_1 = {1};
+         	bins gr_1 = {1};     
+      	}
+	endgroup 
+
+	covergroup ch_address;
+		option.per_instance = 1;
+      	ch_address: coverpoint address{ 
+     		bins ch = {24};
+  		}
+		ch_data: coverpoint vif.s_axi_wdata {
 		 	bins ch_0 = {0};
-         	bins ch_1 = {1};      
-      }
-	endgroup // write_read_address
+         	bins ch_1 = {1};     
+      	}
+	endgroup 
 
    	covergroup read_address;
       	option.per_instance = 1;
@@ -58,8 +83,8 @@ class axi_lite_monitor extends uvm_monitor;
 		data_read: coverpoint vif.s_axi_rdata{
          	bins data_bin_ready = {1};
          	bins data_bin_not_ready = {0};
-      }
-	  raw_and_rbw: cross    read_address, data_read;
+      	}
+	  	raw_and_rbw: cross    read_address, data_read;
    	endgroup
    
    	// ---------------------------------------------------------------------
@@ -70,6 +95,9 @@ class axi_lite_monitor extends uvm_monitor;
   		item_collected_port = new("item_collected_port", this);
   		write_address = new();
   		read_address = new();
+		block_type_address = new();
+		gr_address = new();
+		ch_address = new();
 	endfunction
 
 	function void connect_phase(uvm_phase phase);
@@ -89,6 +117,9 @@ class axi_lite_monitor extends uvm_monitor;
             	if(vif.s_axi_awready )begin		//upisivanje u registre
                		address = vif.s_axi_awaddr;               
                		write_address.sample();
+					block_type_address.sample();
+					gr_address.sample();
+					ch_address.sample();
             	end
             	if(vif.s_axi_arready)		//citanje iz registara
                		address = vif.s_axi_araddr;

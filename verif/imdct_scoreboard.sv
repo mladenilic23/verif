@@ -17,12 +17,13 @@ class imdct_scoreboard extends uvm_scoreboard;
 	int block_type_00, block_type_01, block_type_10, block_type_11;
 	int gr, ch;	
 	int start_count = 0; //broj izvrsavanja
-  	bit start_happend = 0, ready;
+  	bit ready;
 	int unsigned bram_a_que[$];
 	int num_of_data_a; //brojac za bram A
 	int unsigned bram_b_que[$];
 	int num_of_data_b; //brojac za bram B
 	string s;
+	int bram_data;
 	  
 	uvm_analysis_imp_axi_lite#(axi_lite_item, imdct_scoreboard) axi_lite_collected_port;
 	uvm_analysis_imp_bram_a#(bram_a_item, imdct_scoreboard) bram_a_collected_port;
@@ -42,19 +43,18 @@ class imdct_scoreboard extends uvm_scoreboard;
 
 	
 	function void write_axi_lite(axi_lite_item axi_tr);
-		`uvm_info(get_type_name(), "PROSAO!!!!!!", UVM_LOW)
-/*
+
 		$cast(axi_tr_clone, axi_tr.clone());
 	
  			if(checks_enable) begin
  			
  				//cuvamo vrednost block_type_00 u promenljivu sa istim imenom
  				if(axi_tr_clone.address == 4) begin
- 					//block_type_00 = axi_tr_clone.data;
-			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_00 : %d", axi_tr_clone.data), UVM_LOW)
-			    	
+ 					block_type_00 = axi_tr_clone.data;
+			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_00 : %d", block_type_00), UVM_LOW)
+			    end	
          		//cekiranje reset vrednosti -> postavljeno je polje u konfiguraciji samo za test u kome se citaju reset vrednosti i ovde se proverava da li su u redu
-         		if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
+        	/*	if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
          			if(block_type_00 !== 0) begin
          				`uvm_error(get_type_name(), $sformatf("Reset value of BLOCK_TYPE_00 should be 0, but it is %d.", block_type_00))
     				end
@@ -63,11 +63,12 @@ class imdct_scoreboard extends uvm_scoreboard;
     				end
     			end
 				end
-			
+			*/
 				else if(axi_tr_clone.address == 8) begin
 					block_type_01 = axi_tr_clone.data;
 			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_01 : %d", block_type_01), UVM_LOW)
-				
+				end
+			/*	
 				if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
          			if(block_type_01 !== 0) begin
          				`uvm_error(get_type_name(), $sformatf("Reset value of BLOCK_TYPE_01 should be 0, but it is %d.", block_type_01))
@@ -77,11 +78,12 @@ class imdct_scoreboard extends uvm_scoreboard;
     				end
     			end
 				end
-				
+			*/	
 				else if(axi_tr_clone.address == 12) begin
 					block_type_10 = axi_tr_clone.data;
 			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_10 : %d", block_type_10), UVM_LOW)
-				
+				end
+			/*	
 				if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
          			if(block_type_10 !== 0) begin
          				`uvm_error(get_type_name(), $sformatf("Reset value of BLOCK_TYPE_10 should be 0, but it is %d.", block_type_10))
@@ -91,11 +93,12 @@ class imdct_scoreboard extends uvm_scoreboard;
     				end
     			end
 				end
-				
+			*/	
 				else if(axi_tr_clone.address == 16) begin
 					block_type_11 = axi_tr_clone.data;
 			    	`uvm_info(get_type_name(), $sformatf("BLOCK_TYPE_11 : %d", block_type_11), UVM_LOW)
-				
+				end
+			/*	
 				if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
          			if(block_type_11 !== 0) begin
          				`uvm_error(get_type_name(), $sformatf("Reset value of BLOCK_TYPE_11 should be 0, but it is %d.", block_type_11))
@@ -105,11 +108,12 @@ class imdct_scoreboard extends uvm_scoreboard;
     				end
     			end
 				end
-				
+			*/	
 				else if(axi_tr_clone.address == 20) begin
 					gr = axi_tr_clone.data;
 			    	`uvm_info(get_type_name(), $sformatf("GR : %d", gr), UVM_LOW)
-				
+				end
+			/*	
 				if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
          			if(gr !== 0) begin
          				`uvm_error(get_type_name(), $sformatf("Reset value of GR should be 0, but it is %d.", gr))
@@ -119,11 +123,12 @@ class imdct_scoreboard extends uvm_scoreboard;
     				end
     			end
 				end
-				
+			*/	
 				else if(axi_tr_clone.address == 24) begin
 					ch = axi_tr_clone.data;
 			    	`uvm_info(get_type_name(), $sformatf("CH : %d", ch), UVM_LOW)
-				
+				end
+			/*	
 				if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
          			if(ch !== 0) begin
          				`uvm_error(get_type_name(), $sformatf("Reset value of CH should be 0, but it is %d.", ch))
@@ -133,10 +138,10 @@ class imdct_scoreboard extends uvm_scoreboard;
     				end
     			end
 				end
-				
+			*/	
 				else if(axi_tr_clone.address == 0) begin
 				//cekiranje reset vrednosti	
-				if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
+			/*	if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
          			if(axi_tr_clone.data !== 0) begin
          				`uvm_error(get_type_name(), $sformatf("Reset value of START should be 0, but it is %d.", axi_tr_clone.data))
     				end
@@ -144,19 +149,16 @@ class imdct_scoreboard extends uvm_scoreboard;
      					`uvm_info(get_type_name(), "Reset value for START is 0.", UVM_LOW)
     				end
     			end
-    			
+    		*/	
     			if(axi_tr_clone.data == 1) begin
-     				`uvm_info(get_type_name(), $sformatf("IMDCT started"), UVM_LOW)
-    				start_happend = 1;
+     				`uvm_info(get_type_name(), $sformatf("IMDCT started (start_count: %d)", start_count), UVM_LOW)
     				start_count ++;
    				end
   				end
-				
-				
-				
+					
 				else if(axi_tr_clone.address == 28) begin
 				//cekiranje reset vrednosti	
-				if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
+			/*	if(cfg.reset_happend == 1 && axi_tr_clone.read == 1) begin
          			if(axi_tr_clone.data !== 0) begin
          				`uvm_error(get_type_name(), $sformatf("Reset value of READY should be 0, but it is %d.", axi_tr_clone.data))
     				end
@@ -164,7 +166,7 @@ class imdct_scoreboard extends uvm_scoreboard;
      					`uvm_info(get_type_name(), "Reset value for READY is 0.", UVM_LOW)
     				end
     			end
-    			
+    		*/	
     			if(axi_tr_clone.data == 1) begin
      				ready = 1;
    				end
@@ -178,7 +180,7 @@ class imdct_scoreboard extends uvm_scoreboard;
    					`uvm_error(get_type_name(), $sformatf("Register with the address of %d doesn't exist.",axi_tr_clone.address))
   				end
 			end
-	*/
+	
 	endfunction : write_axi_lite
 	
 
@@ -207,6 +209,7 @@ class imdct_scoreboard extends uvm_scoreboard;
 	
 	bram_b_que.push_back(bram_b_tr_clone.in_data[num_of_data_b]); //punim queue B sa podacima
     num_of_data_b++; //da bih ubacio po jedan podatak??
+	bram_data = bram_b_que.size();
  	
 	if(checks_enable) begin
          //provera validnosti podatka (da li je enable na 1)
@@ -214,7 +217,7 @@ class imdct_scoreboard extends uvm_scoreboard;
     		`uvm_error(get_type_name(), "Bram B data is not valid because en is at 0.")
    		end
    		else begin
-    		`uvm_info(get_type_name(), "Bram B data is valid.",UVM_LOW)
+    		`uvm_info(get_type_name(), $sformatf("Bram B data is valid. (Number of data: %d)", bram_data), UVM_LOW)
    		end
 	end
 
@@ -260,16 +263,11 @@ class imdct_scoreboard extends uvm_scoreboard;
 	    end
 	  end
    `uvm_info( get_type_name(), $sformatf("Number of imdct is %d. ", start_count), UVM_LOW)
-   start_count = 0; // vrati start_conut na 0 za sledeci ciklus
+   start_count = 0; // vrati start_count na 0 za sledeci ciklus
 	 end
    else begin //ako nema starta
     `uvm_info(get_type_name(), "IMDCT wasn't started.", UVM_LOW)
    end
 endfunction: check_phase
-	
-	
-	function void report_phase(uvm_phase phase);
-      `uvm_info(get_type_name(), $sformatf("Imdct scoreboard examined: %0d transactions", start_happend), UVM_LOW);
-   	endfunction : report_phase
 
 endclass;
