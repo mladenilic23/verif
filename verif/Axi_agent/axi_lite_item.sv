@@ -21,8 +21,6 @@ class axi_lite_item extends uvm_sequence_item;
       
    	constraint address_constraint {address inside {0, 4, 8, 12, 16, 20, 24, 28};}
    	
-   	//constraint data_constraint {data <= 1;}	// P R O V E R I T I ! ! ! ! ! ! ! ! ! !
-   	
    	function new(string name = "axi_lite_item");
 		super.new(name);
    	endfunction 

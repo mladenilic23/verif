@@ -17,6 +17,7 @@ class axi_lite_monitor extends uvm_monitor;
 
 	axi_lite_item curr_item;
 
+//*******************************************************************************
 	
 	//coverage can go here 
 	covergroup write_address;
@@ -87,7 +88,7 @@ class axi_lite_monitor extends uvm_monitor;
 	  	raw_and_rbw: cross    read_address, data_read;
    	endgroup
    
-   	// ---------------------------------------------------------------------
+//**********************************************************************************
    
 	// constructor
 	function new(string name = "axi_lite_monitor", uvm_component parent = null);
