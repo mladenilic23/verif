@@ -17,12 +17,11 @@ class imdct_scoreboard extends uvm_scoreboard;
 	int start_count = 0; //broj izvrsavanja
   	bit ready;
 	int unsigned bram_a_que[$];
-	int num_of_data_a; //brojac za bram A
 	int unsigned bram_b_que[$];
-	int num_of_data_b; //brojac za bram B
 	string s;
 	int bram_a_data, bram_b_data;
 	int address_of_data_a = 0;
+	int address_of_data_b = 0;
 	  
 	uvm_analysis_imp_axi_lite#(axi_lite_item, imdct_scoreboard) axi_lite_collected_port;
 	uvm_analysis_imp_bram_a#(bram_a_item, imdct_scoreboard) bram_a_collected_port;
@@ -119,32 +118,32 @@ class imdct_scoreboard extends uvm_scoreboard;
 	function void write_bram_a(bram_a_item bram_a_tr);
 
 		$cast(bram_a_tr_clone, bram_a_tr.clone());
-	
-		bram_a_que.push_back(bram_a_tr_clone.in_data[num_of_data_a]); //punim queue A sa podacima
-    	num_of_data_a++; //da bih ubacio po jedan podatak??
-		bram_a_data = bram_a_que.size();
- 		
+	    	 		
 		if(checks_enable) begin
      		//provera validnosti podatka (da li je enable na 1)
 			if(bram_a_tr_clone.en !== 1) begin 
     			`uvm_error(get_type_name(), "Bram A data is not valid because en is at 0.")
    			end
    			else begin
-    			`uvm_info(get_type_name(), $sformatf("Bram A data is valid. (Number of data: %d)", bram_a_data), UVM_LOW)
+    			`uvm_info(get_type_name(), "Bram A data is valid.", UVM_LOW)
    			end
    		
-   			`uvm_info(get_type_name(), $sformatf("BRAM_A QUE: \n%p", bram_a_que), UVM_LOW)
-   		
    			//cekiranje adrese
-  			if(4*address_of_data_a == bram_a_tr_clone.address) begin
-    			`uvm_info(get_type_name(),"Address of B is okay !", UVM_LOW)
-  			end
-  			else begin
-    			`uvm_error(get_type_name(),$sformatf("Address of A is %d, it should be %d", bram_a_tr_clone.address, 4*address_of_data_a))
-  			end
-  		
-  			address_of_data_a++;
-   		
+			if(bram_a_tr_clone.we == 1) begin
+
+				bram_a_que.push_back(bram_a_tr_clone.in_data); //punim queue A sa podacima
+   				`uvm_info(get_type_name(), $sformatf("BRAM_A QUE: \n%p", bram_a_que), UVM_LOW)
+				
+  				if(4*address_of_data_a == bram_a_tr_clone.address) begin
+    				`uvm_info(get_type_name(),"Address of A is okay.", UVM_LOW)
+  				end
+  				else begin
+    				`uvm_error(get_type_name(),$sformatf("Address of A is %d, it should be %d", bram_a_tr_clone.address, 4*address_of_data_a))
+  				end
+
+  				address_of_data_a++;
+				
+			end
 		end
 	endfunction : write_bram_a
 	
@@ -152,21 +151,32 @@ class imdct_scoreboard extends uvm_scoreboard;
 	function void write_bram_b(bram_b_item bram_b_tr);
 
 		$cast(bram_b_tr_clone, bram_b_tr.clone());
-	
-		bram_b_que.push_back(bram_b_tr_clone.in_data[num_of_data_b]); //punim queue B sa podacima
-    	num_of_data_b++; //da bih ubacio po jedan podatak??
-		bram_b_data = bram_b_que.size();
- 	
+	 	
 		if(checks_enable) begin
      		//provera validnosti podatka (da li je enable na 1)
 			if(bram_b_tr_clone.en !== 1) begin 
     			`uvm_error(get_type_name(), "Bram B data is not valid because en is at 0.")
    			end
    			else begin
-    			`uvm_info(get_type_name(), $sformatf("Bram B data is valid. (Number of data: %d)", bram_b_data), UVM_LOW)
+    			`uvm_info(get_type_name(), "Bram B data is valid.", UVM_LOW)
    			end
-   		
-   			`uvm_info(get_type_name(), $sformatf("BRAM_B QUE: \n%p", bram_b_que), UVM_LOW)
+   					
+   			//cekiranje adrese
+			if(bram_b_tr_clone.we == 1) begin
+
+				bram_b_que.push_back(bram_b_tr_clone.in_data); //punim queue B sa podacima
+				`uvm_info(get_type_name(), $sformatf("BRAM_B QUE: \n%p", bram_b_que), UVM_LOW)
+				
+  				if(4*address_of_data_b == bram_b_tr_clone.address) begin
+    				`uvm_info(get_type_name(), "Address of B is okay!", UVM_LOW)
+  				end
+  				else begin
+    				`uvm_error(get_type_name(),$sformatf("Address of B is %d, it should be %d", bram_b_tr_clone.address, 4*address_of_data_b))
+  				end
+
+  				address_of_data_b++;
+				
+			end
    		
 		end
 

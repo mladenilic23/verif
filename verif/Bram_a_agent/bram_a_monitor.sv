@@ -37,15 +37,15 @@ class bram_a_monitor extends uvm_monitor;
       	
       	forever begin
 	         
-         	@(posedge vif.clock iff vif.s_en_bram_a) //begin
+         	@(posedge vif.clock iff vif.s_en_bram_a) begin
 				curr_item.address = vif.s_addr_bram_a;
 					
 				curr_item.en = vif.s_en_bram_a;
 				curr_item.out_data = vif.s_dout_bram_a;
-					
+				curr_item.we = vif.s_we_bram_a;
+
 				if(vif.s_we_bram_a == 1)begin
 					curr_item.in_data = vif.s_din_bram_a;
-					curr_item.we = vif.s_we_bram_a;
 				end
 					
 				//print item
@@ -53,7 +53,7 @@ class bram_a_monitor extends uvm_monitor;
 					
 				item_collected_port.write(curr_item);
 
-			//end //(posedge vif.s_en_bram)
+			end //(posedge vif.s_en_bram)
 
 		end // forever begin
 

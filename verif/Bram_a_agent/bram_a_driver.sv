@@ -34,9 +34,9 @@ class bram_a_driver extends uvm_driver #(bram_a_item);
 		         
 		         if(vif.s_addr_bram_a < 4607)begin
 
-		            //seq_item_port.get_next_item(req);
-		            //req.address = address;
-		            //seq_item_port.item_done();
+		            seq_item_port.get_next_item(req);
+		            req.address = address;
+		        	seq_item_port.item_done();
 
 		            seq_item_port.get_next_item(req);
 		            `uvm_info(get_type_name(), $sformatf("Driver sending...\n%s", req.sprint()), UVM_HIGH)

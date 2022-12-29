@@ -115,7 +115,7 @@ class axi_lite_monitor extends uvm_monitor;
 			curr_item = axi_lite_item::type_id::create("curr_item", this);
 			
          	@(posedge vif.clock)begin
-            	if(vif.s_axi_awready )begin		//upisivanje u registre
+            	if(vif.s_axi_awready )begin		//upisivanje u registar
                		address = vif.s_axi_awaddr;               
                		write_address.sample();
 					block_type_address.sample();
