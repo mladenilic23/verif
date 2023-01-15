@@ -18,7 +18,7 @@ class bram_b_seq extends bram_b_base_seq;
 	  		//finish_item(req);
 	  		
 			start_item(req);
-			req.in_data = 32'b01000000000000000000000000000000;
+			req.in_data = 32'b001000000000000000000000000000000;
 	  		finish_item(req);
 	  		
 	  		//start_item(req);

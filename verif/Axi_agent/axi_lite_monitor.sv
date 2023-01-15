@@ -45,6 +45,7 @@ class axi_lite_monitor extends uvm_monitor;
 		 	bins block_type_2 = {2'b10};
 		 	bins block_type_3 = {2'b11};    
       	}
+      	ch_cross: cross block_type_address, block_type_data;      	
 	endgroup 
 
 	covergroup gr_address;
@@ -56,6 +57,7 @@ class axi_lite_monitor extends uvm_monitor;
 		 	bins gr_0 = {0};
          	bins gr_1 = {1};     
       	}
+      	gr_cross: cross gr_address, gr_data;
 	endgroup 
 
 	covergroup ch_address;
@@ -67,6 +69,7 @@ class axi_lite_monitor extends uvm_monitor;
 		 	bins ch_0 = {0};
          	bins ch_1 = {1};     
       	}
+      	ch_cross: cross ch_address, ch_data;
 	endgroup 
 
    	covergroup read_address;
@@ -85,7 +88,7 @@ class axi_lite_monitor extends uvm_monitor;
          	bins data_bin_ready = {1};
          	bins data_bin_not_ready = {0};
       	}
-	  	raw_and_rbw: cross    read_address, data_read;
+	  	raw_and_rbw: cross read_address, data_read;
    	endgroup
    
 //**********************************************************************************
