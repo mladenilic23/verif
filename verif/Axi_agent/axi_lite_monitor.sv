@@ -33,7 +33,7 @@ class axi_lite_monitor extends uvm_monitor;
 
 	covergroup block_type_address;
 		option.per_instance = 1;
-      	block_type_address: coverpoint address{
+      	block_type_address: coverpoint address {
          	bins block_type_00 = {4};
          	bins block_type_01 = {8};
          	bins block_type_10 = {12};
@@ -50,7 +50,7 @@ class axi_lite_monitor extends uvm_monitor;
 
 	covergroup gr_address;
 		option.per_instance = 1;
-      	gr_address: coverpoint address{ 
+      	gr_address: coverpoint address { 
      		bins gr = {20};
   		}
 		gr_data: coverpoint vif.s_axi_wdata {
@@ -62,7 +62,7 @@ class axi_lite_monitor extends uvm_monitor;
 
 	covergroup ch_address;
 		option.per_instance = 1;
-      	ch_address: coverpoint address{ 
+      	ch_address: coverpoint address { 
      		bins ch = {24};
   		}
 		ch_data: coverpoint vif.s_axi_wdata {
@@ -71,10 +71,22 @@ class axi_lite_monitor extends uvm_monitor;
       	}
       	ch_cross: cross ch_address, ch_data;
 	endgroup 
+	
+	covergroup ready_valid_handshake;
+		option.per_instance = 1;
+      	ready_addr: coverpoint address { 
+     		bins ready = {28};
+  		}
+		valid_bins: coverpoint vif.s_axi_awvalid {
+		 	bins valid_0 = {0};
+         	bins valid_1 = {1};     
+      	}
+      	ready_valid_cross: cross ready_addr, valid_bins;
+	endgroup 
 
    	covergroup read_address;
       	option.per_instance = 1;
-      	read_address: coverpoint address{
+      	read_address: coverpoint address {
          	bins start = {0};
          	bins block_type_00 = {4};
          	bins block_type_01 = {8};
@@ -102,6 +114,7 @@ class axi_lite_monitor extends uvm_monitor;
 		block_type_address = new();
 		gr_address = new();
 		ch_address = new();
+		ready_valid_handshake = new();
 	endfunction
 
 	function void connect_phase(uvm_phase phase);
@@ -124,6 +137,7 @@ class axi_lite_monitor extends uvm_monitor;
 					block_type_address.sample();
 					gr_address.sample();
 					ch_address.sample();
+					ready_valid_handshake.sample();
             	end
             	if(vif.s_axi_arready)		//citanje iz registara
                		address = vif.s_axi_araddr;
