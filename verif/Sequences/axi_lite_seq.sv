@@ -132,6 +132,15 @@ class axi_lite_seq extends axi_lite_base_seq;
   				end
   				 
   			finish_item(req);
+
+			//ready
+  			start_item(req);
+  
+  				if(!req.randomize() with {req.read == 1; req.address == 28;}) begin 
+    				`uvm_fatal(get_type_name(), "Failed to randomize.")
+  				end
+  				 
+  			finish_item(req);
   			
   			//start
   			start_item(req);

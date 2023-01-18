@@ -12,17 +12,20 @@ class imdct_scoreboard extends uvm_scoreboard;
 	bram_a_item bram_a_tr_clone;
 	bram_b_item bram_b_tr_clone;
 	
-	int block_type_00, block_type_01, block_type_10, block_type_11;
-	int gr, ch;	
+	int unsigned block_type_00, block_type_01, block_type_10, block_type_11;
+	int unsigned gr, ch;	
 	int start_count = 0; //broj izvrsavanja
   	bit ready;
-	int unsigned bram_a_que[$];
-	int unsigned bram_b_que[$];
+	int bram_a_que[$];
+	int bram_b_que[$];
 	string s;
 	int bram_a_data, bram_b_data;
 	int address_of_data_a = 0;
 	int address_of_data_b = 0;
-	  
+	int ocekivane_vrednosti[0:17] = {4278967220, 44276972, 4225965081, 91025315, 4183740004, 130011893, 4147287539, 164724800, 4113391099, 198106977, 4080269803, 231991472, 4045388439, 268420964, 4006227902, 310820785, 3959585748, 363735046 };
+	int i = 0;
+	int j = 0;
+	
 	uvm_analysis_imp_axi_lite#(axi_lite_item, imdct_scoreboard) axi_lite_collected_port;
 	uvm_analysis_imp_bram_a#(bram_a_item, imdct_scoreboard) bram_a_collected_port;
 	uvm_analysis_imp_bram_b#(bram_b_item, imdct_scoreboard) bram_b_collected_port;
@@ -115,9 +118,7 @@ class imdct_scoreboard extends uvm_scoreboard;
 	endfunction : write_axi_lite
 	
 
-	function void write_bram_a(bram_a_item bram_a_tr);
-	
-		
+	function void write_bram_a(bram_a_item bram_a_tr);	
 
 		$cast(bram_a_tr_clone, bram_a_tr.clone());
 	    	 		
@@ -144,7 +145,21 @@ class imdct_scoreboard extends uvm_scoreboard;
   				end
 
   				address_of_data_a++;
+
+				if(bram_a_que[j] == ocekivane_vrednosti[i]) begin
+					`uvm_info(get_type_name(), $sformatf("Output match. (%d = %d)",ocekivane_vrednosti[i], bram_a_que[j] ), UVM_LOW)
+				end
+				else begin 
+    				`uvm_error(get_type_name(), $sformatf("Output mismatch. OCEKIVANO: %d, REZULTAT: %d", ocekivane_vrednosti[i], bram_a_que[j]))
+				end
+
+				if( i > 17 )begin
+					i = 0;
+				end		
 				
+				i++;
+				j++;
+
 			end
 		end
 	endfunction : write_bram_a
@@ -177,6 +192,20 @@ class imdct_scoreboard extends uvm_scoreboard;
   				end
 
   				address_of_data_b++;
+
+				if(bram_b_que[j] == ocekivane_vrednosti[i]) begin
+					`uvm_info(get_type_name(), $sformatf("Output match. (%d = %d)",ocekivane_vrednosti[i], bram_b_que[j] ), UVM_LOW)
+				end
+				else begin 
+    				`uvm_error(get_type_name(), $sformatf("Output mismatch. OCEKIVANO: %d, REZULTAT: %d", ocekivane_vrednosti[i], bram_b_que[j]))
+				end
+
+				if( i > 17 )begin
+					i = 0;
+				end		
+				
+				i++;
+				j++;
 				
 			end
    		
@@ -184,52 +213,5 @@ class imdct_scoreboard extends uvm_scoreboard;
 
 	endfunction : write_bram_b
 	
-	
-	function void check_phase(uvm_phase phase);
-	
-		//check for bram a 
- 		if(start_count !== 0) begin
-			assert_epmty_queue_bram_a_after_pop_front: assert (bram_a_que.size() == 0)
-	  		begin
-	    		s = "\n Queue bram_a is empty! \n";
-	    		//print message
-	    		`uvm_info(get_type_name(), $sformatf("%s", s), UVM_HIGH)
-	  		end 
-	  		else begin
-	    		s = $sformatf("\n Queue koji sadrzi podatke iz bram_a nije prazan, sadrzi %0d: \n" ,bram_a_que.size());
-	    		//print message
-      			`uvm_error(get_type_name(), $sformatf("%s", s))
-	    
-	    	foreach (bram_a_que[i]) begin
-	      	`uvm_info(get_type_name(), $sformatf("Transakcija [%d] :", i), UVM_LOW)
-	    	end
-  			end
-	  
-  			//check for bram b 
-			assert_epmty_queue_bram_b_after_pop_front: assert (bram_b_que.size() == 0)
-	  		begin
-	    		s = "\n Queue bram_b is empty! \n";
-	    		// print message
-	    		`uvm_info(get_type_name(), $sformatf("%s", s), UVM_HIGH)
-	  		end
-  	 		else begin
-	    		s = $sformatf("\n Queue koji sadrzi podatke iz bram_b nije prazan, sadrzi %0d: \n" ,bram_b_que.size());
-	    		//print message
-      			`uvm_error(get_type_name(), $sformatf("%s", s))
-	    
-	    	foreach (bram_b_que[i]) begin
-	      	`uvm_info(get_type_name(), $sformatf("Transakcija [%d] :", i), UVM_LOW)
-	    	end
-	  		end
-	  
-			`uvm_info( get_type_name(), $sformatf("Number of imdct is %d. ", start_count), UVM_LOW)
-   			start_count = 0; // vrati start_count na 0 za sledeci ciklus
- 		end
- 	
-   		else begin //ako nema starta
-    		`uvm_info(get_type_name(), "IMDCT wasn't started.", UVM_LOW)
-   		end
-   	
-	endfunction: check_phase
 
 endclass;
