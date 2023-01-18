@@ -16,7 +16,7 @@ module imdct_top;
   bram_b_if bram_b_if_inst(clock, reset_n);
   
   //DUT instance
-  imdct_v15_0 dut(
+  imdct_v12_0 dut(
 	.s00_axi_aclk	   	(clock),
 	.s00_axi_aresetn 	(reset_n),   
 	.s00_axi_awaddr	 	(axi_lite_if_inst.s_axi_awaddr),

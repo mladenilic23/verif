@@ -116,6 +116,8 @@ class imdct_scoreboard extends uvm_scoreboard;
 	
 
 	function void write_bram_a(bram_a_item bram_a_tr);
+	
+		
 
 		$cast(bram_a_tr_clone, bram_a_tr.clone());
 	    	 		
